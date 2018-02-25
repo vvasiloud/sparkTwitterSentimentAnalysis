@@ -1,0 +1,57 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.0.RC1'
+		sparkVersion = '2.2.1'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.vvasiloud'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+configurations {
+	provided
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-webflux')
+	compile('org.twitter4j:twitter4j-core:4.0.6')
+	compile('org.twitter4j:twitter4j-async:4.0.6')
+	compile('org.twitter4j:twitter4j-stream:4.0.6')
+	compileOnly('org.projectlombok:lombok')
+	compile("org.apache.spark:spark-core_2.11:${sparkVersion}")
+	compile('org.apache.bahir:spark-streaming-twitter_2.11:2.2.0')
+	provided("org.apache.spark:spark-streaming_2.11:${sparkVersion}")
+	runtime('org.springframework.boot:spring-boot-devtools')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('io.projectreactor:reactor-test')
+}
+
+sourceSets {
+	main {
+		compileClasspath += configurations.provided
+	}
+}
+
+configurations.all {
+	exclude module: 'slf4j-log4j12'
+}
